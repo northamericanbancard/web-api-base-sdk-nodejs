@@ -5,6 +5,9 @@
  * @copyright   1992-2018 North American Bancard
  */
 
+/**
+ * enum class for the supported HTTP method names
+ */
 export class HttpMethod{
   public static readonly HTTP_METHOD_POST: string = 'POST';
   public static readonly HTTP_METHOD_GET: string = 'GET';

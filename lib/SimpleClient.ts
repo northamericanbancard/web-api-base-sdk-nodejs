@@ -7,19 +7,30 @@
 import { AbstractClient } from './AbstractClient'
 import axios, {AxiosPromise} from 'axios'
 
+/**
+ * Simple client sans authentication standards (with exception of possible x-api-key, if you so wish).
+ */
 class SimpleClient extends AbstractClient{
+  /**
+   * Helper to create the final request object.
+   *
+   * @param method   The HTTP Method to use in the Request
+   * @param endpoint The final endpoint (including the query params)
+   * @param headers  An array of headers to send
+   * @param body     The body of the Request
+   */
   protected createRequest(
     method: string,
-    path: string,
+    endpoint: string,
     headers: {[key: string]: any},
     body: string
   ): AxiosPromise{
-    return axios({
+    return axios(Object.assign({}, this.getConfig(), {
       baseURL: this.getBaseUrl(),
-      url: path,
+      url: endpoint,
       method: method,
       headers: headers,
       data: body
-    })
+    }))
   }
 }

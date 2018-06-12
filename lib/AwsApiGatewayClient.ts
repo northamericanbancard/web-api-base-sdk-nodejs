@@ -8,7 +8,19 @@ import { AbstractClient } from './AbstractClient'
 import axios, {AxiosPromise} from 'axios'
 import aws4 from 'aws4'
 
+/**
+ * Client which will allow us to sign requests we make using sigv4.
+ */
 export class AwsApiGatewayClient extends AbstractClient{
+  /**
+   * Sets up a new AWS API Gateway client.
+   *
+   * @param baseUrl         The base-url for the request, no trailing '/'
+   * @param accessKeyId     The AWS access key id
+   * @param secretAccessKey The AWS secret access key
+   * @param xApiKey         An API key to use during requests, if needed
+   * @param config          Axios configuration
+   */
   public constructor(
     baseUrl: string,
     accessKeyId: string,
@@ -33,18 +45,26 @@ export class AwsApiGatewayClient extends AbstractClient{
     super(baseUrl, xApiKey, config)
   }
 
+  /**
+   * Helper to create the final request object.
+   *
+   * @param method   The HTTP Method to use in the Request
+   * @param endpoint The final endpoint (including the query params)
+   * @param headers  An array of headers to send
+   * @param body     The body of the Request
+   */
   protected createRequest(
     method: string,
-    path: string,
+    endpoint: string,
     headers: {[key: string]: any},
     body: string
   ): AxiosPromise{
-    return axios({
+    return axios(Object.assign({}, this.getConfig(), {
       baseURL: this.getBaseUrl(),
-      url: path,
+      url: endpoint,
       method: method,
       headers: headers,
       data: body
-    })
+    }))
   }
 }
