@@ -34,6 +34,7 @@ class JwtClient extends AbstractClient{
    * @param endpoint The final endpoint (including the query params)
    * @param headers  An array of headers to send
    * @param body     The body of the Request
+   * @returns        The Promise object for the created request
    */
   protected createRequest(
     method: string,

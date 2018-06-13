@@ -126,14 +126,23 @@ export abstract class AbstractClient implements ClientInterface {
     return this.doSendRequest(HttpMethod.HTTP_METHOD_DELETE, path, queryParams, headers, body)
   }
 
+  /**
+   * @returns The base URL used for requests
+   */
   protected getBaseUrl(): string{
     return this.baseUrl
   }
 
+  /**
+   * @returns The HTTP headers used for requests
+   */
   protected getHeaders(): {[key: string]: any}{
     return this.headers;
   }
 
+  /**
+   * @returns The base Axios config used for requests
+   */
   protected getConfig(): {[key: string]: any}{
     return this.config;
   }
@@ -145,6 +154,7 @@ export abstract class AbstractClient implements ClientInterface {
    * @param endpoint The final endpoint (including the query params)
    * @param headers  An array of headers to send
    * @param body     The body of the Request
+   * @returns        The Promise object for the created request
    */
   protected abstract createRequest(
     method: string,
@@ -161,6 +171,7 @@ export abstract class AbstractClient implements ClientInterface {
    * @param queryParams Any query params to attach to the url
    * @param headers     Extra headers to add to Axios's default
    * @param body        The body of the post request
+   * @returns           The Promise object for the sent request
    */
   private doSendRequest(
     method: string,
