@@ -12,6 +12,9 @@ import aws4 from 'aws4'
  * Client which will allow us to sign requests we make using sigv4.
  */
 export class AwsApiGatewayClient extends AbstractClient{
+  private accessKeyId: string
+  private secretAccessKey: string
+
   /**
    * Sets up a new AWS API Gateway client.
    *
@@ -28,21 +31,10 @@ export class AwsApiGatewayClient extends AbstractClient{
     xApiKey?: string,
     config: {[key: string]: any} = {}
   ){
-    var signatureHeaders: {[key: string]: any} = {}
-
-    aws4.sign(signatureHeaders, {
-      accessKeyId: accessKeyId,
-      secretAccessKey: secretAccessKey
-    })
-
-    if(!('headers' in config)){
-      config['headers'] = {}
-    }
-
-    config['headers']['X-Amz-Date'] = signatureHeaders['X-Amz-Date']
-    config['headers']['Authorization'] = signatureHeaders['Authorization']
-
     super(baseUrl, xApiKey, config)
+
+    this.accessKeyId = accessKeyId
+    this.secretAccessKey = secretAccessKey
   }
 
   /**
@@ -59,11 +51,24 @@ export class AwsApiGatewayClient extends AbstractClient{
     headers: {[key: string]: any},
     body: string
   ): AxiosPromise{
+    var signatureHeaders: {[key: string]: any} = {}
+    var allHeaders: {[key: string]: any} = {}
+
+    aws4.sign(signatureHeaders, {
+      accessKeyId: this.accessKeyId,
+      secretAccessKey: this.secretAccessKey
+    })
+
+    Object.assign(allHeaders, headers, {
+      'X-Amz-Date': signatureHeaders['X-Amz-Date'],
+      'Authorization': signatureHeaders['Authorization']
+    })
+
     return axios(Object.assign({}, this.getConfig(), {
       baseURL: this.getBaseUrl(),
       url: endpoint,
       method: method,
-      headers: headers,
+      headers: allHeaders,
       data: body
     }))
   }
